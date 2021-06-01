@@ -40,13 +40,14 @@ export class AppService {
           // process.stdout.write(
           if (data.results[0] && data.results[0].alternatives[0]) {
             console.log(`Transcription: ${data.results[0].alternatives[0].transcript}\n`);
-            result = { text: data.results[0].alternatives[0].transcript ,error:undefined,status:undefined};
+            result = { text: data.results[0].alternatives[0].transcript, error: undefined, status: undefined };
             isSent = true;
+            recording.stop();
             resolve(result);
           }
           else {
             console.log(`\n\nReached transcription time limit, press Ctrl+C\n`);
-            result = { status: "Reached transcription time limit",text:undefined,error:undefined };
+            result = { status: "Reached transcription time limit", text: undefined, error: undefined };
             reject(result);
           }
         });
@@ -60,7 +61,7 @@ export class AppService {
           endOnSilence: true,
           thresholdEnd: 0.5
         })
-     recording.stream()
+      recording.stream()
         .on('error', error => {
           console.log(error);
           result = { error };
@@ -69,8 +70,8 @@ export class AppService {
         .pipe(recognizeStream)
         .on("end", function () {
           if (!isSent)
-              resolve({ text: "", status: "stopped",error:undefined });
-      });
+            resolve({ text: "", status: "stopped", error: undefined });
+        });
     });
 
   }
